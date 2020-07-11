@@ -1,0 +1,11 @@
+{
+    "author": "igorlogius",
+    "content_scripts": [{"matches": [ "<all_urls>" ], "js": [ "content-script.js" ] }],
+    "description": "remove elements",
+    "manifest_version": 2,
+    "name": "dynamic-remover",
+    "version": "1.0.0",
+    "options_ui": { "page": "options.html" },
+    "permissions": [ "storage" ]
+
+}
