@@ -4,7 +4,7 @@
     "description": "remove elements persistently",
     "manifest_version": 2,
     "name": "persistent-element-remover",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "options_ui": { "page": "options.html" },
     "permissions": [ "storage" ]
 
