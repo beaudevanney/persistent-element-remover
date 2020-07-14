@@ -1,9 +1,9 @@
 {
     "author": "igorlogius",
     "content_scripts": [{"matches": [ "<all_urls>" ], "js": [ "content-script.js" ] }],
-    "description": "remove elements",
+    "description": "remove elements persistently",
     "manifest_version": 2,
-    "name": "dynamic-remover",
+    "name": "persistent-element-remover",
     "version": "1.0.0",
     "options_ui": { "page": "options.html" },
     "permissions": [ "storage" ]
