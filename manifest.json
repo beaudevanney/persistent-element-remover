@@ -1,11 +1,26 @@
 {
-    "author": "igorlogius",
-    "content_scripts": [{"matches": [ "<all_urls>" ], "js": [ "content-script.js" ] }],
-    "description": "remove elements persistently",
-    "manifest_version": 2,
-    "name": "persistent-element-remover",
-    "version": "1.0.2",
-    "options_ui": { "page": "options.html" },
-    "permissions": [ "storage" ]
-
+  "author": "igorlogius",
+  "content_scripts": [
+    {
+      "js": [
+        "content-script.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "description": "remove elements persistently",
+  "icons": {
+	"128": "icon.png"
+  },
+  "manifest_version": 2,
+  "name": "persistent-element-remover",
+  "options_ui": {
+    "page": "options.html"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "version": "1.0.2"
 }
