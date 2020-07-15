@@ -5,7 +5,7 @@ const current_url = window.location.href;
 async function remove() {
 	
 	try { 
-		const res = browser.storage.local.get('selectors');
+		const res = await browser.storage.local.get('selectors');
 
 		if ( !Array.isArray(res.selectors) ) { throw 'selectors is not an array'; }
 
