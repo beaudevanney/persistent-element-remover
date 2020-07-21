@@ -10,7 +10,16 @@ function createTableRow(feed) {
 
 	Object.keys(feed).sort().forEach( (key) => {
 
-		if( key === 'code'){
+		if( key === 'activ'){
+			var input = document.createElement('input');
+			input.className = key;
+			input.placeholder = key;
+			input.style.width = '100%';
+			input.type='checkbox';
+			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
+			tr.insertCell().appendChild(input);
+
+		}else if( key === 'code'){
 			var input = document.createElement('textarea');
 			input.className = key;
 			input.placeholder = key;
@@ -49,8 +58,10 @@ function collectConfig() {
 		try {
 			var url_regex = mainTableBody.rows[row].querySelector('.url_regex').value.trim();
 			var ses = mainTableBody.rows[row].querySelector('.code').value.trim();
+			var check = mainTableBody.rows[row].querySelector('.activ').checked;
 			if(url_regex !== '' && ses !== '') {
 				feeds.push({
+					'activ': check,
 					'url_regex': url_regex,
 					'code': ses
 				});
@@ -88,6 +99,7 @@ async function saveOptions(e) {
 async function restoreOptions() {
 	var mainTableBody = document.getElementById('mainTableBody');
 	createTableRow({
+		'activ': 1,
 		'code': '' ,
 		'url_regex': '',
 		'action':'save'

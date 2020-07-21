@@ -7,32 +7,23 @@ async function remove() {
 	try { 
 		const res = await browser.storage.local.get('selectors');
 
-		if ( !Array.isArray(res.selectors) ) { throw 'selectors is not an array'; }
+		if ( !Array.isArray(res.selectors) ) { return; }
 
 		res.selectors.forEach( (selector) => {
+
+			// check activ state of rule
+			if(typeof selector.activ !== 'boolean') { return; }
+			if(selector.activ !== true) { return; }
+
+			// check url regex 
 			if(typeof selector.url_regex !== 'string') { return; }
-			if (selector.url_regex.trim() === ''){ return; }
+			if(selector.url_regex === ''){ return; }
 
 			let re = new RegExp(selector.url_regex, 'g');
 			if(re.test(current_url)){
 				if ( typeof selector.code !== 'string' ) { return; }
-				if ( selector.code.trim() === '' ) { return; }
+				if ( selector.code === '' ) { return; }
 
-				/* // old stuff
-				selector.selectors.split("\n").forEach( (sel) => {
-					if (typeof sel !== 'string') { return; }
-					if(sel.trim() === '') { return;	}
-					document.querySelectorAll(sel).forEach ( (el) => {
-						if(typeof el.remove === 'function'){
-							el.remove();
-							console.log('removed element', current_url , sel);
-						}
-					});
-				});
-				*/
-
-				console.log(selector.code);
-				// new stuff
 				try {
 					//els = window.eval('(function(){ ' + selector.code + ' })()');
 					let generator = new Function(selector.code);
@@ -45,8 +36,6 @@ async function remove() {
 				}catch(e){
 					console.error(e, selector.code);
 				}
-				//
-
 			}
 		});
 	}catch(e) {
