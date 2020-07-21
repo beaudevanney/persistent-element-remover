@@ -46,10 +46,6 @@ function createTableRow(feed) {
 	tr.insertCell().appendChild(button);
 }
 
-async function saveConfig(config) {
-	await browser.storage.local.set(config);
-}
-
 function collectConfig() {
 	// collect configuration from DOM
 	var mainTableBody = document.getElementById('mainTableBody');
@@ -114,3 +110,41 @@ async function restoreOptions() {
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
 
+const impbtn = document.getElementById('impbtn');
+const expbtn = document.getElementById('expbtn');
+
+expbtn.addEventListener('click', async function (evt) {
+    var dl = document.createElement('a');
+    var res = await browser.storage.local.get('selectors');
+    var content = JSON.stringify(res.selectors);
+	//console.log(content);
+//	return;
+    dl.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(content));
+    dl.setAttribute('download', 'data.json');
+    dl.setAttribute('visibility', 'hidden');
+    dl.setAttribute('display', 'none');
+    document.body.appendChild(dl);
+    dl.click();
+    document.body.removeChild(dl);
+});
+
+impbtn.addEventListener('input', function (evt) {
+
+	var file  = this.files[0];
+
+	//console.log(file.name);
+	
+	var reader = new FileReader();
+	        reader.onload = async function(e) {
+            try {
+                var config = JSON.parse(reader.result);
+		//console.log("impbtn", config);
+		await browser.storage.local.set({ 'selectors': config});
+		document.querySelector("form").submit();
+            } catch (e) {
+                console.error('error loading file: ' + e);
+            }
+        };
+        reader.readAsText(file);
+
+});
