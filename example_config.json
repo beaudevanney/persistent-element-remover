@@ -1,1 +1,17 @@
-[{"activ":true,"url_regex":"www.amazon.*","code":"const selectors = [ 'div[data-component-type=\"sp-sponsored-result\"]', 'div > span[data-component-type=\"s-ads-metrics\"]'];let res = [];selectors.forEach( (selector) => { res.concat(document.querySelectorAll(selector));});return res;"},{"activ":true,"url_regex":"9gag.com*","code":"// get closes artikel parent function getClosestArtikelParent(node){while(node !== null && node.tagName !== 'ARTICLE' ) {node = node.parentNode;}return node;}let res = [];document.querySelectorAll('img[src*=\"promoted.jpg\"]').forEach( (img) => {el = getClosestArtikelParent(img);res.push(el);});return res;"},{"activ":true,"url_regex":"www.reddit.com*","code":"return document.querySelectorAll(\"div.promotedlink\");"}]
+[
+  {
+    "activ": true,
+    "code": "const selectors = [ 'div[data-component-type=\"sp-sponsored-result\"]', 'div > span[data-component-type=\"s-ads-metrics\"]'];let res = [];selectors.forEach( (selector) => { res.concat(document.querySelectorAll(selector));});return res;",
+    "url_regex": "www.amazon.*"
+  },
+  {
+    "activ": true,
+    "code": "// get closes artikel parent function getClosestArtikelParent(node){while(node !== null && node.tagName !== 'ARTICLE' ) {node = node.parentNode;}return node;}let res = [];document.querySelectorAll('img[src*=\"promoted.jpg\"]').forEach( (img) => {el = getClosestArtikelParent(img);res.push(el);});return res;",
+    "url_regex": "9gag.com*"
+  },
+  {
+    "activ": true,
+    "code": "return document.querySelectorAll(\"div.promotedlink\");",
+    "url_regex": "www.reddit.com*"
+  }
+]
