@@ -34,8 +34,9 @@ async function remove() {
 				console.log(selector.code);
 				// new stuff
 				try {
-					els = window.eval('(function(){ ' + selector.code + ' })()');
-					els.forEach( (el) => {
+					//els = window.eval('(function(){ ' + selector.code + ' })()');
+					let generator = new Function(selector.code);
+					generator().forEach( (el) => {
 						if(typeof el.remove === 'function'){
 							el.remove();
 							console.log('removed element', current_url);
