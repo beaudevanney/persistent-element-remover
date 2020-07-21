@@ -18,7 +18,7 @@ EXTRDIR=$(mktemp -d)
 wget -q --show-progress 'https://github.com/igorlogius/persistent-element-remover/archive/master.zip' -O $ZIPFILE
 
 # extract without paths and README
-unzip -j $ZIPFILE -d $EXTRDIR -x "*/README"
+unzip -j $ZIPFILE -d $EXTRDIR -x "*/README" -x "*/example_config.json"
 
 # re-pack as xpi (zip) without paths and extended file attributes 
 XPI="persistent-element-remover-$(grep '"version"' $EXTRDIR/manifest.json |cut -d'"' -f4)-$(date '+%F_%T').xpi" 
