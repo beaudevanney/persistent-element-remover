@@ -10,7 +10,7 @@ function createTableRow(feed) {
 
 	Object.keys(feed).sort().forEach( (key) => {
 
-		if( key === 'selectors'){
+		if( key === 'code'){
 			var input = document.createElement('textarea');
 			input.className = key;
 			input.placeholder = key;
@@ -48,11 +48,11 @@ function collectConfig() {
 	for (var row = 0; row < mainTableBody.rows.length; row++) { 
 		try {
 			var url_regex = mainTableBody.rows[row].querySelector('.url_regex').value.trim();
-			var ses = mainTableBody.rows[row].querySelector('.selectors').value.trim();
+			var ses = mainTableBody.rows[row].querySelector('.code').value.trim();
 			if(url_regex !== '' && ses !== '') {
 				feeds.push({
 					'url_regex': url_regex,
-					'selectors': ses
+					'code': ses
 				});
 			}
 		}catch(e){
@@ -88,7 +88,7 @@ async function saveOptions(e) {
 async function restoreOptions() {
 	var mainTableBody = document.getElementById('mainTableBody');
 	createTableRow({
-		'selectors': '' ,
+		'code': '' ,
 		'url_regex': '',
 		'action':'save'
 	});
