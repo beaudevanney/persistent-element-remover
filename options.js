@@ -110,6 +110,7 @@ async function restoreOptions() {
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
 
+const impbtnWrp = document.getElementById('impbtn_wrapper');
 const impbtn = document.getElementById('impbtn');
 const expbtn = document.getElementById('expbtn');
 
@@ -117,8 +118,8 @@ expbtn.addEventListener('click', async function (evt) {
     var dl = document.createElement('a');
     var res = await browser.storage.local.get('selectors');
     var content = JSON.stringify(res.selectors);
-	//console.log(content);
-//	return;
+    //console.log(content);
+    //	return;
     dl.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(content));
     dl.setAttribute('download', 'data.json');
     dl.setAttribute('visibility', 'hidden');
@@ -128,8 +129,13 @@ expbtn.addEventListener('click', async function (evt) {
     document.body.removeChild(dl);
 });
 
-impbtn.addEventListener('input', function (evt) {
+// delegate to real Import Button which is a file selector
+impbtnWrp.addEventListener('click', function(evt) {
+	impbtn.click();
+})
 
+impbtn.addEventListener('input', function (evt) {
+	
 	var file  = this.files[0];
 
 	//console.log(file.name);
