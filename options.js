@@ -101,6 +101,7 @@ async function restoreOptions() {
 		'action':'save'
 	});
 	var res = await browser.storage.local.get('selectors');
+	if ( !Array.isArray(res.selectors) ) { return; }
 	res.selectors.forEach( (selector) => {
 		selector.action = 'delete'
 		createTableRow(selector);
