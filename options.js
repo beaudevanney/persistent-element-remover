@@ -17,6 +17,7 @@ function createTableRow(feed) {
 			input.style.width = '100%';
 			input.type='checkbox';
 			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
+			input.disabled = (typeof feed[key] !== 'boolean');
 			tr.insertCell().appendChild(input);
 
 		}else if( key === 'code'){
@@ -26,15 +27,15 @@ function createTableRow(feed) {
 			input.style.width = '100%';
 			input.value = feed[key];
 			tr.insertCell().appendChild(input);
-		}else
-			if( key !== 'action'){
-				var input = document.createElement('input');
-				input.className = key;
-				input.placeholder = key;
-				input.style.width = '100%';
-				input.value = feed[key];
-				tr.insertCell().appendChild(input);
-			}
+
+		}else if( key !== 'action'){
+			var input = document.createElement('input');
+			input.className = key;
+			input.placeholder = key;
+			input.style.width = '100%';
+			input.value = feed[key];
+			tr.insertCell().appendChild(input);
+		}
 	});
 
 	var button;
@@ -95,7 +96,7 @@ async function saveOptions(e) {
 async function restoreOptions() {
 	var mainTableBody = document.getElementById('mainTableBody');
 	createTableRow({
-		'activ': 1,
+		'activ': '', // not a boolean to be unchecked
 		'code': '' ,
 		'url_regex': '',
 		'action':'save'

@@ -38,17 +38,19 @@
 			if ( selector.code === '' ) { return; }
 
 			try {
-				gen = new Function(selector.code)
+				// eval exception are handled 
+				gen = eval('(function(){' + selector.code + '}());')
 			
 				// save generator to rerun when something changes
 				generators.push(gen)
 			}catch(e){
-				console.error('generator code is invalid, skipping: ', selector.code);
+				console.error('error in generator code, skipping: ', selector.code);
 			}
 
 		}
 	});
 
+	// only do something when it is necessary
 	if( generators.length > 0) {
 		console.log('registered persistend-element-remover');
 		remove();
