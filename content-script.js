@@ -1,36 +1,44 @@
 
+
 (async function() {
 
-	const generators = [];
-	// save url on page load
-	const current_url = window.location.href;
+	function log(level, msg) { 
+		console[level](msg); 
+	}
 
-	async function remove() {
-		generators.forEach( (generator) => {
-			generator().forEach( (el) => {
+	function remove() {
+		log('debug','remove()');
+		generators.forEach( (gen) => {
+			gen().forEach( (el) => { 
 				if(typeof el.remove === 'function'){
 					el.remove();
-					console.log('removed element');
+					log('debug','el.remove()');
 				}
 			});
 		});
 	}
 
-	// get rules from storage
+	const extId = 'persistent-element-remover';
+
+	const generators = [];
+
+	const current_url = window.location.href;
+
 	const res = await browser.storage.local.get('selectors');
+
 	if ( !Array.isArray(res.selectors) ) { return; }
 
 	res.selectors.forEach( (selector) => {
 
 		// check activ state of rule
-		if(typeof selector.activ !== 'boolean') { return; } 
+		if(typeof selector.activ !== 'boolean') { return; }
 		if(selector.activ !== true) { return; }
 
 		// check url regex 
 		if(typeof selector.url_regex !== 'string') { return; }
 		if(selector.url_regex === ''){ return; }
 
-		const re = new RegExp(selector.url_regex, 'g');
+		let re = new RegExp(selector.url_regex, 'g');
 
 		if(re.test(current_url)){
 
@@ -38,22 +46,21 @@
 			if ( selector.code === '' ) { return; }
 
 			try {
-				// eval exception are handled 
-				gen = eval('(function(){' + selector.code + '}());')
-			
-				// save generator to rerun when something changes
-				generators.push(gen)
-			}catch(e){
-				console.error('error in generator code, skipping: ', selector.code);
-			}
+				let generator = new Function(selector.code);
+				generators.push(generator);
 
+			}catch(e){
+				log('error', selector.code);
+			}
 		}
 	});
 
-	// only do something when it is necessary
-	if( generators.length > 0) {
-		console.log('registered persistend-element-remover');
+	if(generators.length > 0){
 		remove();
+		log('debug', 'registered MutationObserver');
 		(new MutationObserver(remove)).observe(document.body, { attributes: false, childList: true, subtree: true }); 
+	}else{
+		log('debug','no matching rules');
 	}
-})();
+
+}());
