@@ -1,48 +1,45 @@
 
-(async function() {
+(async () => {
 
-	function log(level, msg) { 
-		if (['debug','info','log','error'].includes(level)){
-			console[level]('PER::' + level + '::' + msg); 
+	const extId = 'PER';
+	const generators = [];
+	const current_url = window.location.href;
+
+	const log = (level, msg) => { 
+		if (['debug', 'info','log','error','warn'].includes(level)){
+			console[level](extId + '::' + level + '::' + msg); 
 		}else{
-			log('error','invalued argument for log()');
+			log('error', extId + 'invalued level argument "' + level + '" for function log(level,msg)');
 		}
 	}
 
-	function remove_elements(els) {
-		if ( !Array.isArray(els) ) { return; }
+	const remove_elements = (els) => {
+		if ( typeof els.forEach !== 'function') { return; }
 		els.forEach( (el) => { 
 			if(typeof el.remove === 'function'){
 				el.remove();
-				log('debug','el.remove()');
+				log('debug','element removed');
+			}else{
+				log('debug','element not removed (missing remove() function)');
 			}
 		});
 	}
 
-	function remove() {
-		generators.forEach( (gen) => {
-			try {
-				remove_elements(gen());
-			}catch(e){
-				log('error', 'code execution');
-			}
-		});
+	const onChange = () => {
+		log('debug','onChange()'+ generators.length);
+		if ( typeof generators.forEach !== 'function') { return; }
+		generators.forEach( (gen) => { remove_elements(gen()); });
 	}
 
-	const extId = 'PER';
 
-	const generators = [];
+	try {
+		const store = await browser.storage.local.get('selectors');
 
-	const current_url = window.location.href;
+		if ( typeof store.selectors.forEach !== 'function' ) { throw 'selectors has no forEach'; }
 
-	try { 
-		const res = await browser.storage.local.get('selectors');
+		store.selectors.forEach( (selector) => {
 
-		if ( !Array.isArray(res.selectors) ) { return; }
-
-		res.selectors.forEach( (selector) => {
-
-			// check activ state of rule
+			// check activ
 			if(typeof selector.activ !== 'boolean') { return; }
 			if(selector.activ !== true) { return; }
 
@@ -50,36 +47,36 @@
 			if(typeof selector.url_regex !== 'string') { return; }
 			if(selector.url_regex === ''){ return; }
 
-			// 
 			try { 
-				let re = new RegExp(selector.url_regex, 'g');
-				if(re.test(current_url)){
-
-					if ( typeof selector.code !== 'string' ) { return; }
-					if ( selector.code === '' ) { return; }
-
-					try {
-						let generator = new Function(selector.code);
-						generators.push(generator);
-					}catch(e){
-						log('error', 'Code error:' + selectors.code);
-					}
-				}
+				const re = new RegExp(selector.url_regex, 'g');
+				if(!re.test(current_url)){ return; }
 			} catch(e) {
-				log('error', 'regex error: ' + selectors.url_regex);
+				log('warn', 'invalid url regex : ' + selectors.url_regex);
+				return;
+			}
+
+			if ( typeof selector.code !== 'string' ) { return; }
+			if ( selector.code === '' ) { return; }
+
+			try {
+				const gen = new Function(selector.code); // build function
+				remove_elements(gen()); // execute function
+				generators.push(gen); // store function 
+			}catch(e){
+				log('warn', 'code execution failed :' + selectors.code);
 			}
 		});
 
 		if(generators.length > 0){
-			remove();
-			log('debug', 'registered MutationObserver');
-			(new MutationObserver(remove)).observe(document.body, { attributes: false, childList: true, subtree: true }); 
+			log('info', 'registered mutation observer');
+			(new MutationObserver(onChange)).observe(document.body, { attributes: false, childList: true, subtree: true }); 
 		}else{
 			log('debug','no matching rules');
 		}
 
 	}catch(e){
-		log('error', 'storage access failed');
+		log('error', 'access to local storage failed');
+		return;
 	}
 
-}());
+})();
