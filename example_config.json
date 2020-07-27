@@ -1,12 +1,17 @@
 [
   {
     "activ": true,
-    "code": "const selectors = [ 'div[data-component-type=\"sp-sponsored-result\"]', 'div > span[data-component-type=\"s-ads-metrics\"]'];let res = [];selectors.forEach( (selector) => { res.concat(document.querySelectorAll(selector));});return res;",
+    "code": "return document.querySelectorAll('section.b-deals, section.b-topproducts');",
+    "url_regex": "www.ebay.com.*"
+  },
+  {
+    "activ": true,
+    "code": "return document.querySelectorAll('div[data-component-type=\"sp-sponsored-result\"], div > span[data-component-type=\"s-ads-metrics\"]');",
     "url_regex": "www.amazon.*"
   },
   {
     "activ": true,
-    "code": "// get closes artikel parent function getClosestArtikelParent(node){while(node !== null && node.tagName !== 'ARTICLE' ) {node = node.parentNode;}return node;}let res = [];document.querySelectorAll('img[src*=\"promoted.jpg\"]').forEach( (img) => {el = getClosestArtikelParent(img);res.push(el);});return res;",
+    "code": "function getClosestArtikelParent(node){while(node !== null && node.tagName !== 'ARTICLE' ) {node = node.parentNode;}return node;}let res = [];document.querySelectorAll('img[src*=\"promoted.jpg\"]').forEach( (img) => {el = getClosestArtikelParent(img);res.push(el);});return res;",
     "url_regex": "9gag.com*"
   },
   {
