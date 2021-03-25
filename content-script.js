@@ -2,7 +2,7 @@
 (async () => {
 
 	let store;
-	const extId = 'PER';
+	const extId = 'persistent-element-remover';
 	const generators = [];
 	const temporary = browser.runtime.id.endsWith('@temporary-addon'); // debugging?
 
