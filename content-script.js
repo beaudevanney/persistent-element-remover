@@ -43,6 +43,13 @@
 		return;
 	}
 
+	const isSelectorValid = ((dummyElement) =>
+		(selector) => {
+			try { dummyElement.querySelectorAll(selector) } catch { return false }
+			return true
+		})(document.createDocumentFragment());
+
+
 	store.selectors.forEach( (selector) => {
 
 		// check activ
@@ -64,28 +71,25 @@
 		if ( typeof selector.code !== 'string' ) { return; }
 		if ( selector.code === '' ) { return; }
 
-
-		const isSelectorValid = ((dummyElement) =>
-			(selector) => {
-				try { dummyElement.querySelectorAll(selector) } catch { return false }
-				return true
-			})(document.createDocumentFragment());
-
-
-		let gen;
-		if(isSelectorValid(selector.code)) {
-			gen = function() { return document.querySelectorAll(selector.code); }
-		}else {
-			log('debug', 'is not a valid css selector :' + selector.code);
+		const gen = (() => {
 			try {
-				gen = new Function(selector.code); 
+				return (new Function(selector.code)); 
 			}catch(e){
-				log('error', 'code build/execution failed :' + selector.code);
-				return;
+				log('debug', 'code building failed : "' + selector.code + '"');
+				if(isSelectorValid(selector.code)) {
+					return function() { return document.querySelectorAll(selector.code); }
+				}else {
+					log('debug', 'not a valid css selector : "' + selector.code + '"');
+				}
+				log('error', 'code not recognised as css selector or javacript function code : "' + selector.code + '"');
+				return null;
 			}
+		})();
+
+		if(typeof gen === 'function') {
+			remove_elements(gen()); // execute function
+			generators.push(gen); // store function 
 		}
-		remove_elements(gen()); // execute function
-		generators.push(gen); // store function 
 	});
 
 	if(generators.length > 0){
