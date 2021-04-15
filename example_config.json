@@ -1,22 +1,26 @@
 [
   {
     "activ": true,
-    "code": "return document.querySelectorAll('section.b-deals, section.b-topproducts');",
-    "url_regex": "www.ebay.com.*"
+    "code": "section.b-deals, section.b-topproducts",
+    "is_css_selector": true,
+    "url_regex": "^https:\\/\\/www\\.ebay\\.com.*"
   },
   {
     "activ": true,
-    "code": "return document.querySelectorAll('div[data-component-type=\"sp-sponsored-result\"], div > span[data-component-type=\"s-ads-metrics\"]');",
-    "url_regex": "www.amazon.*"
+    "code": "div[data-component-type=\"sp-sponsored-result\"], div > span[data-component-type=\"s-ads-metrics\"]",
+    "is_css_selector": true,
+    "url_regex": "https:\\/\\/www\\.amazon\\..*"
+  },
+  {
+    "activ": true,
+    "code": "div.promotedlink",
+    "is_css_selector": true,
+    "url_regex": "^https:\\/\\/www\\.reddit\\.com.*"
   },
   {
     "activ": true,
     "code": "function getClosestArtikelParent(node){while(node !== null && node.tagName !== 'ARTICLE' ) {node = node.parentNode;}return node;}let res = [];document.querySelectorAll('img[src*=\"promoted.jpg\"]').forEach( (img) => {el = getClosestArtikelParent(img);res.push(el);});return res;",
-    "url_regex": "9gag.com*"
-  },
-  {
-    "activ": true,
-    "code": "return document.querySelectorAll(\"div.promotedlink\");",
-    "url_regex": "www.reddit.com*"
+    "is_css_selector": false,
+    "url_regex": "^https:\\/\\/9gag\\.com.*"
   }
 ]
