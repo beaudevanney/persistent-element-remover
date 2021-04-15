@@ -64,21 +64,28 @@
 		if ( typeof selector.code !== 'string' ) { return; }
 		if ( selector.code === '' ) { return; }
 
-		try {
-			let gen;
-			// if the "code" contains a 'return ' string, it is most likely js code
-			// this is not perfect, but ... changing the storage layout ... to include another option would break some peopls config, which ... is kind of awful
-			// TODO: rewrite options.js to update old storage layout and include switch instead of this "hack"
-			if(/^|[\n \(;]return[\n \(;]/.test(selector.code)) {
-				gen = new Function(selector.code); // build function
-			} else { // otherwise assume it is a selector 
-				gen = function() { return document.querySelectorAll(selector.code); }
+
+		const isSelectorValid = ((dummyElement) =>
+			(selector) => {
+				try { dummyElement.querySelectorAll(selector) } catch { return false }
+				return true
+			})(document.createDocumentFragment());
+
+
+		let gen;
+		if(isSelectorValid(selector.code)) {
+			gen = function() { return document.querySelectorAll(selector.code); }
+		}else {
+			log('debug', 'is not a valid css selector :' + selector.code);
+			try {
+				gen = new Function(selector.code); 
+			}catch(e){
+				log('error', 'code build/execution failed :' + selector.code);
+				return;
 			}
-			remove_elements(gen()); // execute function
-			generators.push(gen); // store function 
-		}catch(e){
-			log('error', 'code build/execution failed :' + selector.code);
 		}
+		remove_elements(gen()); // execute function
+		generators.push(gen); // store function 
 	});
 
 	if(generators.length > 0){
