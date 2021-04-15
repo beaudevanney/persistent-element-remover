@@ -66,10 +66,13 @@
 
 		try {
 			let gen;
-			if(typeof selector.is_css_selector === 'boolean' && selector.is_css_selector === true) {
-				gen = function() { return document.querySelectorAll(selector.code); }
-			} else {
+			// if the "code" contains a 'return ' string, it is most likely js code
+			// this is not perfect, but ... changing the storage layout ... to include another option would break some peopls config, which ... is kind of awful
+			// TODO: rewrite options.js to update old storage layout and include switch instead of this "hack"
+			if(/[\n \(;]return[\n \(;]/.test(selector.code)) {
 				gen = new Function(selector.code); // build function
+			} else { // otherwise assume it is a selector 
+				gen = function() { return document.querySelectorAll(selector.code); }
 			}
 			remove_elements(gen()); // execute function
 			generators.push(gen); // store function 

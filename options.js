@@ -3,6 +3,27 @@ function deleteRow(rowTr) {
 	var mainTableBody = document.getElementById('mainTableBody');
 	mainTableBody.removeChild(rowTr);
 }
+/*
+function sanatizeConfig(config) {
+
+	let tmp = [];
+	config.forEach( (key) => {
+
+		let skip = false;
+		const attrs = [   'activ',  'code','is_js_code','url_regex'];
+		const types = [ 'boolean','string',   'boolean',   'string'];
+		for (var i=0;i< attrs.length;i++){
+			if((typeof key[attrs[i]]) !== types[i]) {
+				skip = true;
+				break;
+			}
+		}
+		if(!skip) {
+			tmp.push(key);
+		}
+	});
+	return tmp;
+}*/
 
 function createTableRow(feed) {
 	var mainTableBody = document.getElementById('mainTableBody');
@@ -10,6 +31,7 @@ function createTableRow(feed) {
 
 	Object.keys(feed).sort().forEach( (key) => {
 
+		//console.log(key);
 		if( key === 'activ'){
 			var input = document.createElement('input');
 			input.className = key;
@@ -19,7 +41,8 @@ function createTableRow(feed) {
 			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
 			tr.insertCell().appendChild(input);
 
-		}else if( key === 'is_css_selector'){
+		/*}
+		else if( key === 'is_js_code'){
 			var input = document.createElement('input');
 			input.className = key;
 			input.placeholder = key;
@@ -27,7 +50,7 @@ function createTableRow(feed) {
 			input.type='checkbox';
 			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
 			tr.insertCell().appendChild(input);
-
+		*/
 		}else if( key === 'code'){
 			var input = document.createElement('textarea');
 			input.className = key;
@@ -64,12 +87,12 @@ function collectConfig() {
 			var url_regex = mainTableBody.rows[row].querySelector('.url_regex').value.trim();
 			var ses = mainTableBody.rows[row].querySelector('.code').value.trim();
 			var check = mainTableBody.rows[row].querySelector('.activ').checked;
-			var is_css_selector = mainTableBody.rows[row].querySelector('.is_css_selector').checked;
+			//var is_js_code = mainTableBody.rows[row].querySelector('.is_js_code').checked;
 			if(url_regex !== '' && ses !== '') {
 				feeds.push({
 					'activ': check,
 					'url_regex': url_regex,
-					'is_css_selector': is_css_selector,
+					//'is_js_code': is_js_code,
 					'code': ses
 				});
 			}
@@ -99,8 +122,9 @@ function createButton(text, id, callback, submit) {
 }
 
 async function saveOptions(e) {
-	var feeds = collectConfig();
-	await browser.storage.local.set({ 'selectors': feeds });
+	var config = collectConfig();
+	//config = sanatizeConfig(config);
+	await browser.storage.local.set({ 'selectors': config });
 }
 
 async function restoreOptions() {
@@ -109,7 +133,7 @@ async function restoreOptions() {
 		'activ': 1,
 		'code': '' ,
 		'url_regex': '',
-		'is_css_selector': '' ,
+		//'is_js_code': 1 ,
 		'action':'save'
 	});
 	var res = await browser.storage.local.get('selectors');
@@ -158,6 +182,9 @@ impbtn.addEventListener('input', function (evt) {
             try {
                 var config = JSON.parse(reader.result);
 		//console.log("impbtn", config);
+
+		//config = sanatizeConfig(config);
+
 		await browser.storage.local.set({ 'selectors': config});
 		document.querySelector("form").submit();
             } catch (e) {
