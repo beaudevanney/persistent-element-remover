@@ -19,6 +19,15 @@ function createTableRow(feed) {
 			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
 			tr.insertCell().appendChild(input);
 
+		}else if( key === 'is_css_selector'){
+			var input = document.createElement('input');
+			input.className = key;
+			input.placeholder = key;
+			input.style.width = '100%';
+			input.type='checkbox';
+			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
+			tr.insertCell().appendChild(input);
+
 		}else if( key === 'code'){
 			var input = document.createElement('textarea');
 			input.className = key;
@@ -55,10 +64,12 @@ function collectConfig() {
 			var url_regex = mainTableBody.rows[row].querySelector('.url_regex').value.trim();
 			var ses = mainTableBody.rows[row].querySelector('.code').value.trim();
 			var check = mainTableBody.rows[row].querySelector('.activ').checked;
+			var is_css_selector = mainTableBody.rows[row].querySelector('.is_css_selector').checked;
 			if(url_regex !== '' && ses !== '') {
 				feeds.push({
 					'activ': check,
 					'url_regex': url_regex,
+					'is_css_selector': is_css_selector,
 					'code': ses
 				});
 			}
@@ -98,6 +109,7 @@ async function restoreOptions() {
 		'activ': 1,
 		'code': '' ,
 		'url_regex': '',
+		'is_css_selector': '' ,
 		'action':'save'
 	});
 	var res = await browser.storage.local.get('selectors');

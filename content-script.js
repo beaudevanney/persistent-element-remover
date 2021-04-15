@@ -11,7 +11,7 @@
 		if (['error','warn'].includes(level) 
 			|| ( temporary && ['debug','info','log'].includes(level))
 		) {
-			console[level](extId + '::' + level.toUpperCase() + '::' + msg); 
+			console[level]('[' + extId + '] [' + level.toUpperCase() + '] ' + msg); 
 			return;
 		}
 	}
@@ -65,11 +65,16 @@
 		if ( selector.code === '' ) { return; }
 
 		try {
-			const gen = new Function(selector.code); // build function
+			let gen;
+			if(typeof selector.is_css_selector === 'boolean' && selector.is_css_selector === true) {
+				gen = function() { return document.querySelectorAll(selector.code); }
+			} else {
+				gen = new Function(selector.code); // build function
+			}
 			remove_elements(gen()); // execute function
 			generators.push(gen); // store function 
 		}catch(e){
-			log('WARN', 'code execution failed :' + selectors.code);
+			log('error', 'code build/execution failed :' + selector.code);
 		}
 	});
 
