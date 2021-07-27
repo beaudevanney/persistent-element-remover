@@ -2,7 +2,7 @@
 
 # variables
 ID="persistent-element-remover"
-BRANCH="master"
+BRANCH="main"
 
 MISSING_REQ=0
 for req in mktemp wget unzip zip grep cut date;do
