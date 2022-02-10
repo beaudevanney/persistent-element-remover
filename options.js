@@ -28,6 +28,7 @@ function sanatizeConfig(config) {
 function createTableRow(feed) {
 	var mainTableBody = document.getElementById('mainTableBody');
 	var tr = mainTableBody.insertRow();
+    tr.style="vertical-align:top;"
 
 	Object.keys(feed).sort().forEach( (key) => {
 
@@ -56,7 +57,15 @@ function createTableRow(feed) {
 			input.className = key;
 			input.placeholder = key;
 			input.style.width = '98%';
+			//input.style.height= '1em';
 			input.style.height= '1em';
+            input.addEventListener('focus', function() {
+                this.style.height = "";this.style.height = this.scrollHeight + "px";
+            });
+            input.addEventListener('focusout', function() {
+                //this.style.height = "";this.style.height = this.scrollHeight + "px";
+			    input.style.height= '1em';
+            });
 			input.value = feed[key];
 			tr.insertCell().appendChild(input);
 		}else
