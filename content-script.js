@@ -1,24 +1,25 @@
 
 (async () => {
 
+    let timerID;
 	let store;
 	const extId = 'persistent-element-remover';
-	const generators = [];
+	//const generators = [];
 	const temporary = browser.runtime.id.endsWith('@temporary-addon'); // debugging?
 
-	const log = (level, msg) => { 
+	const log = (level, msg) => {
 		level = level.trim().toLowerCase();
-		if (['error','warn'].includes(level) 
+		if (['error','warn'].includes(level)
 			|| ( temporary && ['debug','info','log'].includes(level))
 		) {
-			console[level]('[' + extId + '] [' + level.toUpperCase() + '] ' + msg); 
+			console[level]('[' + extId + '] [' + level.toUpperCase() + '] ' + msg);
 			return;
 		}
 	}
 
 	const remove_elements = (els) => {
 		if ( typeof els.forEach !== 'function') { return; }
-		els.forEach( (el) => { 
+		els.forEach( (el) => {
 			if(typeof el.remove === 'function'){
 				el.remove();
 				log('DEBUG','element removed');
@@ -26,9 +27,8 @@
 		});
 	}
 
-	const onChange = () => {
-		generators.forEach( (gen) => { remove_elements(gen()); });
-	}
+	async function onChange () {
+		//generators.forEach( (gen) => { remove_elements(gen()); });
 
 
 	try {
@@ -38,7 +38,7 @@
 		return;
 	}
 
-	if ( typeof store.selectors.forEach !== 'function' ) { 
+	if ( typeof store.selectors.forEach !== 'function' ) {
 		log('ERROR', 'rules selectors not iterable');
 		return;
 	}
@@ -56,12 +56,13 @@
 		if(typeof selector.activ !== 'boolean') { return; }
 		if(selector.activ !== true) { return; }
 
-		// check url regex 
+		// check url regex
 		if(typeof selector.url_regex !== 'string') { return; }
-		selector.url_regex = selector.url_regex.trim(); 
+		selector.url_regex = selector.url_regex.trim();
 		if(selector.url_regex === ''){ return; }
 
-		try { 
+        //console.log(window.location.href);
+		try {
 			if(!(new RegExp(selector.url_regex)).test(window.location.href)){ return; }
 		} catch(e) {
 			log('WARN', 'invalid url regex : ' + selectors.url_regex);
@@ -73,7 +74,7 @@
 
 		const gen = (() => {
 			try {
-				return (new Function(selector.code)); 
+				return (new Function(selector.code));
 			}catch(e){
 				log('debug', 'code building failed : "' + selector.code + '"');
 				if(isSelectorValid(selector.code)) {
@@ -87,16 +88,25 @@
 		})();
 
 		if(typeof gen === 'function') {
-			remove_elements(gen()); // execute function
-			generators.push(gen); // store function 
+			//remove_elements(gen()); // execute function
+			//generators.push(gen); // store function
+            remove_elements(gen());
 		}
 	});
-
-	if(generators.length > 0){
-		log('INFO', 'registered mutation observer');
-		(new MutationObserver(onChange)).observe(document.body, { attributes: false, childList: true, subtree: true }); 
-	}else{
-		log('DEBUG','no matching rules');
 	}
+
+    // if we have many mution events, wait until the site has settled
+    function delayed_onChange(){
+        clearTimeout(timerID);
+        timerID = setTimeout(onChange, 250);
+    }
+
+	//if(generators.length > 0){
+		//log('INFO', 'registered mutation observer');
+		(new MutationObserver(delayed_onChange)).observe(document.body, { attributes: false, childList: true, subtree: true });
+        //onChange();
+	//}else{
+	//	log('DEBUG','no matching rules');
+	//}
 
 })();

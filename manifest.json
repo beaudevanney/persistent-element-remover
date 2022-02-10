@@ -1,5 +1,12 @@
 {
   "author": "igorlogius",
+  "browser_action": {
+    "browser_style": true,
+    "default_title" : "edit persistent-element-remover rules"
+  },
+  "background": {
+	"scripts": ["background.js"]
+  },
   "content_scripts": [
     {
       "js": [
@@ -17,10 +24,12 @@
   "manifest_version": 2,
   "name": "persistent-element-remover",
   "options_ui": {
+    "browser_style": true,
+    "open_in_tab": true,
     "page": "options.html"
   },
   "permissions": [
     "storage"
   ],
-  "version": "1.4.11"
+  "version": "1.5.0"
 }

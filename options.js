@@ -36,7 +36,7 @@ function createTableRow(feed) {
 			var input = document.createElement('input');
 			input.className = key;
 			input.placeholder = key;
-			input.style.width = '100%';
+			input.style.width = '99%';
 			input.type='checkbox';
 			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
 			tr.insertCell().appendChild(input);
@@ -55,7 +55,8 @@ function createTableRow(feed) {
 			var input = document.createElement('textarea');
 			input.className = key;
 			input.placeholder = key;
-			input.style.width = '100%';
+			input.style.width = '98%';
+			input.style.height= '1em';
 			input.value = feed[key];
 			tr.insertCell().appendChild(input);
 		}else
@@ -63,7 +64,7 @@ function createTableRow(feed) {
 				var input = document.createElement('input');
 				input.className = key;
 				input.placeholder = key;
-				input.style.width = '100%';
+				input.style.width = '99%';
 				input.value = feed[key];
 				tr.insertCell().appendChild(input);
 			}
@@ -82,7 +83,7 @@ function collectConfig() {
 	// collect configuration from DOM
 	var mainTableBody = document.getElementById('mainTableBody');
 	var feeds = [];
-	for (var row = 0; row < mainTableBody.rows.length; row++) { 
+	for (var row = 0; row < mainTableBody.rows.length; row++) {
 		try {
 			var url_regex = mainTableBody.rows[row].querySelector('.url_regex').value.trim();
 			var ses = mainTableBody.rows[row].querySelector('.code').value.trim();
@@ -109,6 +110,7 @@ function createButton(text, id, callback, submit) {
 	button.id = id;
 	button.textContent = text;
 	button.className = "browser-style";
+	button.style.width = '99%';
 	if (submit) {
 		button.type = "submit";
 	} else {
@@ -172,11 +174,11 @@ impbtnWrp.addEventListener('click', function(evt) {
 })
 
 impbtn.addEventListener('input', function (evt) {
-	
+
 	var file  = this.files[0];
 
 	//console.log(file.name);
-	
+
 	var reader = new FileReader();
 	        reader.onload = async function(e) {
             try {
