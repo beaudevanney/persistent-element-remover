@@ -19,6 +19,7 @@ let table = null;
 const impbtnWrp = document.getElementById('impbtn_wrapper');
 const impbtn = document.getElementById('impbtn');
 const savbtn= document.getElementById('savbtn');
+const discbtn= document.getElementById('discbtn');
 const expbtn = document.getElementById('expbtn');
 const delbtn = document.getElementById('delbtn');
 const ablebtn = document.getElementById('ablebtn');
@@ -65,6 +66,10 @@ delbtn.addEventListener('click', (evt) =>  {
     }
 });
 
+discbtn.addEventListener('click', (evt)=> {
+    window.location.reload();
+});
+
 savbtn.addEventListener('click', (evt)=> {
     let data = table.getData();
     let i=0;
@@ -74,10 +79,6 @@ savbtn.addEventListener('click', (evt)=> {
         data[i].repeatdelay = parseInt(data[i].repeatdelay);
         data[i].randomrepeatvariance= parseInt(data[i].randomrepeatvariance);
         data[i].idx = i;
-        if(i==0){
-
-            console.log(JSON.stringify(data[0],null,4));
-        }
     }
     browser.storage.local.set({ 'selectors': data })
     savbtn.style.background='lightgreen';
@@ -111,7 +112,7 @@ expbtn.addEventListener('click', (evt) => {
     let dl = document.createElement('a');
     const href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
     dl.setAttribute('href', href);
-    dl.setAttribute('download', 'per-rules.json');
+    dl.setAttribute('download', extId + '-rules.json');
     dl.setAttribute('visibility', 'hidden');
     dl.setAttribute('display', 'none');
     document.body.appendChild(dl);
