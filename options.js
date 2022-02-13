@@ -75,9 +75,6 @@ savbtn.addEventListener('click', (evt)=> {
     let i=0;
     for(i=0; i<data.length;i++){
         // numbers need parsing ... for whatever reason
-        data[i].initaldelay = parseInt(data[i].initaldelay);
-        data[i].repeatdelay = parseInt(data[i].repeatdelay);
-        data[i].randomrepeatvariance= parseInt(data[i].randomrepeatvariance);
         data[i].idx = i;
     }
     browser.storage.local.set({ 'selectors': data })
@@ -101,9 +98,6 @@ expbtn.addEventListener('click', (evt) => {
     const expData = [];
     selectedRows.forEach( (row) => {
         const rowData = row.getData();
-        rowData.initaldelay = parseInt(rowData.initaldelay);
-        rowData.repeatdelay = parseInt(rowData.repeatdelay);
-        rowData.randomrepeatvariance= parseInt(rowData.randomrepeatvariance);
         rowData.idx = idx_count;
         expData.push(rowData);
     });
@@ -172,7 +166,8 @@ function tagValuesLookup (){
 async function onDOMContentLoaded() {
 
     table = new Tabulator("#mainTable", {
-        height: "100%",
+        //height: "100%",
+        virtualDom:false, //disable virtual DOM rendering
         layout:"fitDataStretch", //fit columns to width of table
         responsiveLayout: "hide",//hide columns that dont fit on the table
         pagination: false,       //paginate the data
@@ -197,7 +192,7 @@ async function onDOMContentLoaded() {
             }
             },
             {title:"Annotation", field:"annotation", maxWidth: 240, headerFilter:"input", headerFilterPlaceholder:"Text filter", editor:"input", sorter: "string", sorterParams: {locale: true, alignEmptyValues: "top"}},
-            {title:"CSS Selector or JS Code (*)", field:"code", width:"25%",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"input"},
+            {title:"CSS Selector or JS Code (*)", field:"code", width:"25%",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"textarea", editorParams: { verticalNavigation: "editor", } ,formatter: "plaintext" },
             {title:'URL Regular Expression (*)', width:"25%",field:"urlregex",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"input"},
         ]
     });
