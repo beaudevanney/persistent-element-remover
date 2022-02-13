@@ -2,26 +2,25 @@
 <html>
     <head>
         <meta charset="utf-8"></meta>
-        <title>PER Options</title>
+        <title>PER Rules</title>
+        <link href="tabulator.css" rel="stylesheet">
     </head>
     <body style="background: gray">
-        <form id="mainForm" accept-charset="utf-8">
-            <p></p>
-            <input type="submit" value="Save changes" />
-            <input id="impbtn_wrapper" type="button" name="impbtn" value="Import Rules" />
-            <input id="impbtn" type="file" name="impbtn" value="" style="display:none" />
-            <input id="expbtn" type="button" name="impbtn" value="Export Rules" />
-            <p></p>
-            <table id="mainTable" border=1 style="width:100%;" >
-                <thead>
-                    <th style="width:0px">Enabled</th>
-                    <th>CSS Selector or JS Code</th>
-                    <th>URL RegEx</th>
-                    <th style="width:0px">Action</th>
-                </thead>
-                <tbody id='mainTableBody' />
-            </table>
-        </form>
+
+        <p></p>
+        <center>
+        <button style="background:lightgreen;" id="savbtn" > Save changes</button>
+        <button id="impbtn_wrapper" > Import Rules</button>
+        <input id="impbtn" type="file" name="impbtn" value="" style="display:none" />
+        <button id="addbtn" type="button" name="addbtn" >Add New Rule</button>
+        <button id="ablebtn" type="button" name="impbtn" >Toggle Enabled for Selected</button>
+        <button id="expbtn" type="button" name="impbtn" >Export Selected</button>
+        <button id="delbtn" type="button" name="impbtn" >Delete Selected</button>
+        </center>
+        <p></p>
+        <table id="mainTable" border=1 style="width:100%;" ></table>
+        <span>Field marked with (*) are required</span>
+        <script src="tabulator.js"></script>
         <script src="options.js"></script>
     </body>
 </html>

@@ -1,175 +1,117 @@
 
-function deleteRow(rowTr) {
-	var mainTableBody = document.getElementById('mainTableBody');
-	mainTableBody.removeChild(rowTr);
-}
-/*
-function sanatizeConfig(config) {
+const extId = 'PER';
+const temporary = browser.runtime.id.endsWith('@temporary-addon');
 
-	let tmp = [];
-	config.forEach( (key) => {
-
-		let skip = false;
-		const attrs = [   'activ',  'code','is_js_code','url_regex'];
-		const types = [ 'boolean','string',   'boolean',   'string'];
-		for (var i=0;i< attrs.length;i++){
-			if((typeof key[attrs[i]]) !== types[i]) {
-				skip = true;
-				break;
-			}
-		}
-		if(!skip) {
-			tmp.push(key);
-		}
-	});
-	return tmp;
-}*/
-
-function createTableRow(feed) {
-	var mainTableBody = document.getElementById('mainTableBody');
-	var tr = mainTableBody.insertRow();
-    tr.style="vertical-align:top;"
-
-	Object.keys(feed).sort().forEach( (key) => {
-
-		//console.log(key);
-		if( key === 'activ'){
-			var input = document.createElement('input');
-			input.className = key;
-			input.placeholder = key;
-			input.style.width = '99%';
-			input.type='checkbox';
-			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
-			tr.insertCell().appendChild(input);
-
-		/*}
-		else if( key === 'is_js_code'){
-			var input = document.createElement('input');
-			input.className = key;
-			input.placeholder = key;
-			input.style.width = '100%';
-			input.type='checkbox';
-			input.checked= (typeof feed[key] === 'boolean'? feed[key]: true);
-			tr.insertCell().appendChild(input);
-		*/
-		}else if( key === 'code'){
-			var input = document.createElement('textarea');
-			input.className = key;
-			input.placeholder = key;
-			input.style.width = '98%';
-			//input.style.height= '1em';
-			input.style.height= '1em';
-            input.addEventListener('focus', function() {
-                this.style.height = "";this.style.height = this.scrollHeight + "px";
-            });
-            input.addEventListener('focusout', function() {
-                //this.style.height = "";this.style.height = this.scrollHeight + "px";
-			    input.style.height= '1em';
-            });
-			input.value = feed[key];
-			tr.insertCell().appendChild(input);
-		}else
-			if( key !== 'action'){
-				var input = document.createElement('input');
-				input.className = key;
-				input.placeholder = key;
-				input.style.width = '99%';
-				input.value = feed[key];
-				tr.insertCell().appendChild(input);
-			}
-	});
-
-	var button;
-	if(feed.action === 'save'){
-		button = createButton("Save", "saveButton", function() {}, true );
-	}else{
-		button = createButton("Delete", "deleteButton", function() { deleteRow(tr); }, false );
-	}
-	tr.insertCell().appendChild(button);
+const log = (level, msg) => {
+    level = level.trim().toLowerCase();
+    if (['error','warn'].includes(level)
+        || ( temporary && ['debug','info','log'].includes(level))
+    ) {
+        console[level]('[' + extId + '] [' + level.toUpperCase() + '] ' + msg);
+        return;
+    }
 }
 
-function collectConfig() {
-	// collect configuration from DOM
-	var mainTableBody = document.getElementById('mainTableBody');
-	var feeds = [];
-	for (var row = 0; row < mainTableBody.rows.length; row++) {
-		try {
-			var url_regex = mainTableBody.rows[row].querySelector('.url_regex').value.trim();
-			var ses = mainTableBody.rows[row].querySelector('.code').value.trim();
-			var check = mainTableBody.rows[row].querySelector('.activ').checked;
-			//var is_js_code = mainTableBody.rows[row].querySelector('.is_js_code').checked;
-			if(url_regex !== '' && ses !== '') {
-				feeds.push({
-					'activ': check,
-					'url_regex': url_regex,
-					//'is_js_code': is_js_code,
-					'code': ses
-				});
-			}
-		}catch(e){
-			console.error(e);
-		}
-	}
-	return feeds;
-}
 
-function createButton(text, id, callback, submit) {
-	var span = document.createElement('span');
-	var button = document.createElement('button');
-	button.id = id;
-	button.textContent = text;
-	button.className = "browser-style";
-	button.style.width = '99%';
-	if (submit) {
-		button.type = "submit";
-	} else {
-		button.type = "button";
-	}
-	button.name = id;
-	button.value = id;
-	button.addEventListener("click", callback);
-	span.appendChild(button);
-	return span;
-}
+let table = null;
 
-async function saveOptions(e) {
-	var config = collectConfig();
-	//config = sanatizeConfig(config);
-	await browser.storage.local.set({ 'selectors': config });
-}
-
-async function restoreOptions() {
-	var mainTableBody = document.getElementById('mainTableBody');
-	createTableRow({
-		'activ': 1,
-		'code': '' ,
-		'url_regex': '',
-		//'is_js_code': 1 ,
-		'action':'save'
-	});
-	var res = await browser.storage.local.get('selectors');
-	if ( !Array.isArray(res.selectors) ) { return; }
-	res.selectors.forEach( (selector) => {
-		selector.action = 'delete'
-		createTableRow(selector);
-	});
-}
-
-document.addEventListener('DOMContentLoaded', restoreOptions);
-document.querySelector("form").addEventListener("submit", saveOptions);
-
+// button refs
 const impbtnWrp = document.getElementById('impbtn_wrapper');
 const impbtn = document.getElementById('impbtn');
+const savbtn= document.getElementById('savbtn');
 const expbtn = document.getElementById('expbtn');
+const delbtn = document.getElementById('delbtn');
+const ablebtn = document.getElementById('ablebtn');
+const addbtn = document.getElementById('addbtn');
 
-expbtn.addEventListener('click', async function (evt) {
-    var dl = document.createElement('a');
-    var res = await browser.storage.local.get('selectors');
-    var content = JSON.stringify(res.selectors);
-    //console.log(content);
-    //	return;
-    dl.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(content));
-    dl.setAttribute('download', 'data.json');
+function hightlightChange(){
+    savbtn.style.background='red';
+}
+
+addbtn.addEventListener('click', async (evt) => {
+    table.deselectRow();
+    table.addRow({
+        enabled: true,
+        group: '',
+        annotation: '',
+        tags: '',
+        code: '',
+        urlregex: '',
+    },true); // add at the top
+    hightlightChange();
+});
+
+ablebtn.addEventListener('click', (evt) => {
+    let changed = false;
+    table.getSelectedRows().forEach( (row) => {
+        const cell = row.getCell('enabled');
+        if(cell.setValue(!cell.getValue())){
+            changed = true;
+        }
+    });
+    if(changed){
+        hightlightChange();
+    }
+});
+
+delbtn.addEventListener('click', (evt) =>  {
+    let changed = false;
+    table.getSelectedRows().forEach( (row) =>  {
+        row.delete();
+        changed = true;
+    });
+    if(changed){
+        hightlightChange();
+    }
+});
+
+savbtn.addEventListener('click', (evt)=> {
+    let data = table.getData();
+    let i=0;
+    for(i=0; i<data.length;i++){
+        // numbers need parsing ... for whatever reason
+        data[i].initaldelay = parseInt(data[i].initaldelay);
+        data[i].repeatdelay = parseInt(data[i].repeatdelay);
+        data[i].randomrepeatvariance= parseInt(data[i].randomrepeatvariance);
+        data[i].idx = i;
+        if(i==0){
+
+            console.log(JSON.stringify(data[0],null,4));
+        }
+    }
+    browser.storage.local.set({ 'selectors': data })
+    savbtn.style.background='lightgreen';
+});
+
+expbtn.addEventListener('click', (evt) => {
+
+    let selectedRows = table.getSelectedRows();
+
+    // order the selected by position
+
+    selectedRows.sort( (a,b) => {
+        return b.getPosition() - a.getPosition();
+    });
+
+
+    let idx_count = 0;
+
+    // fixup the export data
+    const expData = [];
+    selectedRows.forEach( (row) => {
+        const rowData = row.getData();
+        rowData.initaldelay = parseInt(rowData.initaldelay);
+        rowData.repeatdelay = parseInt(rowData.repeatdelay);
+        rowData.randomrepeatvariance= parseInt(rowData.randomrepeatvariance);
+        rowData.idx = idx_count;
+        expData.push(rowData);
+    });
+    const content = JSON.stringify(expData,null,4);
+    console.log(content);
+    let dl = document.createElement('a');
+    const href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
+    dl.setAttribute('href', href);
+    dl.setAttribute('download', 'per-rules.json');
     dl.setAttribute('visibility', 'hidden');
     dl.setAttribute('display', 'none');
     document.body.appendChild(dl);
@@ -177,31 +119,167 @@ expbtn.addEventListener('click', async function (evt) {
     document.body.removeChild(dl);
 });
 
-// delegate to real Import Button which is a file selector
+// delegate to real import Button which is a file selector
 impbtnWrp.addEventListener('click', function(evt) {
 	impbtn.click();
-})
+});
 
+// read data from file into current table
 impbtn.addEventListener('input', function (evt) {
-
 	var file  = this.files[0];
-
-	//console.log(file.name);
-
 	var reader = new FileReader();
 	        reader.onload = async function(e) {
             try {
                 var config = JSON.parse(reader.result);
-		//console.log("impbtn", config);
-
-		//config = sanatizeConfig(config);
-
-		await browser.storage.local.set({ 'selectors': config});
-		document.querySelector("form").submit();
+                let imported_something = false;
+                config.forEach( (selector) => {
+                    table.addRow({
+                        enabled: selector.activ || selector.enabled || false,
+                        group: selector.group || '',
+                        annotation: selector.annotation || '',
+                        tags: selector.tags || '',
+                        code: selector.code || '',
+                        urlregex: selector.url_regex || selector.urlregex || ''
+                    }, false);
+                    imported_something = true;
+                });
+                if(imported_something) {
+                    hightlightChange();
+                }
             } catch (e) {
-                console.error('error loading file: ' + e);
+                log('ERROR','error loading file ' + e);
             }
         };
         reader.readAsText(file);
-
 });
+
+function tagValuesLookup (){
+    const rows = table.getRows();
+    const tags = [];
+    for(const row of rows){
+        const cell = row.getCell('tags');
+        const vals = cell.getValue().split(/[\s,]+/);
+        for(const val of vals){
+            if(val !== ''){
+                tags.push(val);
+            }
+        }
+    }
+    return tags;
+}
+
+async function onDOMContentLoaded() {
+
+    table = new Tabulator("#mainTable", {
+        height: "100%",
+        layout:"fitDataStretch", //fit columns to width of table
+        responsiveLayout: "hide",//hide columns that dont fit on the table
+        pagination: false,       //paginate the data
+        movableRows: true,
+        groupBy: ["group"],
+        groupUpdateOnCellEdit:true,
+        groupStartOpen: false,
+        initialSort: [
+            {column: "group", dir: "asc"},
+        ],
+        columns:[
+            {rowHandle:true, formatter:"handle", headerSort:false, frozen:true, width:30, minWidth:30, },
+            {formatter:"rowSelection", titleFormatter:"rowSelection", width:30, minWidth:30, hozAlign:"left", headerSort:false, cellClick:function(e, cell){
+                cell.getRow().toggleSelect();
+            }},
+            {title:"Enabled", width: 100, field:"enabled", headerSort: false, sorter:"boolean",formatter: "tickCross",  headerHozAlign: "center",  hozAlign:"center", editor:true, editorParams: { tristate:false}},
+            {title:"Group"  , width: 120, field:"group"  , sorter:"string" , headerFilter:"input",  headerFilterPlaceholder:"Text filter", editor:"input",sorterParams: {locale: true, alignEmptyValues: "top"} }, // add new rows to the top
+            {title:"Tags"   , width: 120, field:"tags"   , sorter:"string" , headerFilter:"select", headerFilterPlaceholder:"Multiselect", editor:"input", headerFilterParams:{
+                values: tagValuesLookup, // get values
+                verticalNavigation:"hybrid", //navigate to new row when at the top or bottom of the selection list
+                multiselect:true, //allow multiple entries to be selected
+            }
+            },
+            {title:"Annotation", field:"annotation", maxWidth: 240, headerFilter:"input", headerFilterPlaceholder:"Text filter", editor:"input", sorter: "string", sorterParams: {locale: true, alignEmptyValues: "top"}},
+            {title:"CSS Selector or JS Code (*)", field:"code", width:"25%",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"input"},
+            {title:'URL Regular Expression (*)', width:"25%",field:"urlregex",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"input"},
+        ]
+    });
+
+    // Load data
+    const data = await getTblData();
+    data.forEach((e) => {
+        table.addRow(e,true);
+    });
+
+    /**
+     * Register Table Events
+     */
+    // hlchange if values change
+    table.on("cellEdited", function(cell){
+        if(cell.getValue() !== cell.getOldValue()){
+            hightlightChange();
+        }
+    });
+
+    // todo: determine if the row actually moved
+    table.on("rowMoved", function(row){
+        hightlightChange();
+    });
+
+    // invert the selected state of each row
+    table.on("groupClick", function(e, group){
+        group.getRows().forEach( (row) => {
+            row.toggleSelect();
+        });
+    });
+
+    // after adding a row, open the group it is in and highlight/select it
+    table.on("rowAdded", function(row){
+        var group = row.getGroup();
+        group.show();
+        row.select();
+    });
+
+}
+
+async function getTblData() {
+    const data = [];
+    var res = await browser.storage.local.get('selectors');
+
+    if ( Array.isArray(res.selectors) ) {
+        res.selectors.sort(function(b,a){
+            // > 0 => b before a
+            // < 0 => a before b
+            // === 0 => keep original order of a and b
+
+            if(typeof a.idx === 'undefined' && typeof b.idx === 'number'){
+                return 1; // b before a
+            }
+            if(typeof a.idx === 'number' && typeof b.idx === 'undefined'){
+                return -1; // a before b
+            }
+
+            if(typeof a.idx === 'number' && typeof b.idx === 'number'){
+                if(a.idx > b.idx){
+                    return 1;
+                }
+                if(a.idx < b.idx){
+                    return -1;
+                }
+            }
+            // if in doubt, do nothing :) , also covers  double undefined and a === b
+            return 0;
+
+        });
+        res.selectors.forEach( (selector) => {
+            data.push({
+                enabled: selector.activ || selector.enabled || false,
+                annotation: selector.annotation || '',
+                tags: selector.tags || '',
+                group: selector.group || '',
+                code: selector.code || '',
+                urlregex: selector.url_regex || selector.urlregex || '',
+            });
+        });
+    }
+    return data;
+}
+
+document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
