@@ -1,5 +1,4 @@
 
-
 let timerID;
 const extId = 'PER';
 const temporary = browser.runtime.id.endsWith('@temporary-addon');
@@ -34,8 +33,16 @@ async function onChange () {
         return;
     }
 
+    if(typeof store === 'undefined') {
+        log('ERROR', 'rules store is undefined');
+    }
+
+    if(typeof store.selectors === 'undefined') {
+        log('ERROR', 'selectors are undefined');
+    }
+
     if ( typeof store.selectors.forEach !== 'function' ) {
-        log('ERROR', 'rules selectors not iterable');
+        log('ERROR', 'selectors not iterable');
         return;
     }
 
@@ -92,9 +99,13 @@ async function onChange () {
 // if we have many mution events, wait until the site has settled
 function delayed_onChange(){
     clearTimeout(timerID);
-    timerID = setTimeout(onChange, 250);
+    timerID = setTimeout(onChange, 500); // todo: maybe there is a better way to determine if the site is settled
 }
 
-// start observer
-(new MutationObserver(delayed_onChange)).observe(document.body, { attributes: false, childList: true, subtree: true });
+function init() {
+    // start observer
+    (new MutationObserver(delayed_onChange)).observe(document.body, { attributes: false, childList: true, subtree: true });
+    delayed_onChange();
+}
 
+setTimeout(init, 500); // adding delays ... makes stuff better
