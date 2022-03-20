@@ -24,10 +24,20 @@ const expbtn = document.getElementById('expbtn');
 const delbtn = document.getElementById('delbtn');
 const ablebtn = document.getElementById('ablebtn');
 const addbtn = document.getElementById('addbtn');
+const tgladv = document.getElementById('tgladv');
 
 function hightlightChange(){
-    savbtn.style.background='red';
+    savbtn.style.borderColor='red';
 }
+
+function unhightlightChange(){
+    savbtn.style.borderColor='';
+}
+
+tgladv.addEventListener('click', async function (evt) {
+    table.toggleColumn('tags');
+    table.toggleColumn('annotation');
+});
 
 addbtn.addEventListener('click', async (evt) => {
     table.deselectRow();
@@ -78,7 +88,7 @@ savbtn.addEventListener('click', (evt)=> {
         data[i].idx = i;
     }
     browser.storage.local.set({ 'selectors': data })
-    savbtn.style.background='lightgreen';
+    unhightlightChange();
 });
 
 expbtn.addEventListener('click', (evt) => {
@@ -155,7 +165,7 @@ function tagValuesLookup (){
         const cell = row.getCell('tags');
         const vals = cell.getValue().split(/[\s,]+/);
         for(const val of vals){
-            if(val !== ''){
+            if(val !== '' && !tags.includes(val)){
                 tags.push(val);
             }
         }
@@ -190,10 +200,13 @@ async function onDOMContentLoaded() {
                 verticalNavigation:"hybrid", //navigate to new row when at the top or bottom of the selection list
                 multiselect:true, //allow multiple entries to be selected
             }
+                , visible: false
             },
-            {title:"Annotation", field:"annotation", maxWidth: 240, headerFilter:"input", headerFilterPlaceholder:"Text filter", editor:"input", sorter: "string", sorterParams: {locale: true, alignEmptyValues: "top"}},
-            {title:"CSS Selector or JS Code (*)", field:"code", width:"25%",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"textarea", editorParams: { verticalNavigation: "editor", } ,formatter: "plaintext" },
-            {title:'URL Regular Expression (*)', width:"25%",field:"urlregex",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"input"},
+            {title:"Annotation", field:"annotation", maxWidth: 240, headerFilter:"input", headerFilterPlaceholder:"Text filter", editor:"input", sorter: "string", sorterParams: {locale: true, alignEmptyValues: "top"}
+                , visible: false
+            },
+            {title:"CSS Selector or JS Code (*)", field:"code" ,headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"textarea", editorParams: { verticalNavigation: "editor", } ,formatter: "plaintext" },
+            {title:'URL Regular Expression (*)',field:"urlregex",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"input"},
         ]
     });
 

@@ -4,20 +4,25 @@
         <meta charset="utf-8"></meta>
         <title>PER Rules</title>
         <link href="tabulator.css" rel="stylesheet">
+        <link href="options.css" rel="stylesheet">
     </head>
-    <body style="background: gray">
+    <body>
 
         <p></p>
-        <center>
-        <button style="background:lightgreen;" id="savbtn" >Save Changes</button>
-        <button id="addbtn" type="button" name="addbtn" >Add New</button>
-        <button id="impbtn_wrapper" > Import/Add</button>
-        <input id="impbtn" type="file" name="impbtn" value="" style="display:none" />
-        <button id="discbtn" > Discard Changes</button>
-        <button id="ablebtn" type="button" name="impbtn" >Toggle Enabled (Selected)</button>
-        <button id="expbtn" type="button" name="impbtn" >Export (Selected)</button>
-        <button id="delbtn" type="button" name="impbtn" >Delete (Selected)</button>
-        </center>
+        <fieldset>
+            <button id="addbtn" title="create a new empty rule" >&#10039; New</button>
+            <button id="delbtn" title="delete selected rules"> &#10005; Delete</button>
+            <button id="impbtn_wrapper" title="import rules from a file to add"> &darr;Import</button>
+            <input id="impbtn" type="file" value="" style="display:none" />
+            <button id="expbtn" title="export selected"> &uarr;Export</button>
+            <button id="ablebtn" title="invert the enabled state of the selected rules" style="display:none;" >Toggle Enabled (Selected)</button>
+            <button id="savbtn" title="save changes" >&#10003; Save</button>
+            <button id="discbtn" title="discard changes" >&#9888; Discard </button>
+                <div style="float:right;">
+                    <button id="tgladv" title="toggle options" > &#9881; Options </button>
+                    <a target="_blank" href="https://github.com/igorlogius/persistent-element-remover/wiki/Basic-Usage" > <button> &#8505; Help </button></a>
+                </div>
+        </fieldset>
         <p></p>
         <table id="mainTable" border=1 style="width:100%;height:80vh;" ></table>
         <span>Columns marked with (*) are required</span>
