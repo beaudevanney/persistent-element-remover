@@ -2,7 +2,7 @@
   "author": "igorlogius",
   "browser_action": {
     "browser_style": true,
-    "default_title" : "edit persistent-element-remover rules"
+    "default_title" : "Edit PER rules"
   },
   "background": {
 	"scripts": ["background.js"]
@@ -17,12 +17,12 @@
       ]
     }
   ],
-  "description": "remove elements persistently",
+  "description": "Remove elements persistently",
   "icons": {
     "128": "icon.png"
   },
   "manifest_version": 2,
-  "name": "persistent-element-remover",
+  "name": "Persistent Element Remover",
   "options_ui": {
     "browser_style": true,
     "open_in_tab": true,
