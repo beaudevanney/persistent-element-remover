@@ -1,3 +1,4 @@
+/* global browser Tabulator */
 
 const extId = 'PER';
 const temporary = browser.runtime.id.endsWith('@temporary-addon');
@@ -34,12 +35,12 @@ function unhightlightChange(){
     savbtn.style.borderColor='';
 }
 
-tgladv.addEventListener('click', async function (evt) {
+tgladv.addEventListener('click', async function () {
     table.toggleColumn('tags');
     table.toggleColumn('annotation');
 });
 
-addbtn.addEventListener('click', async (evt) => {
+addbtn.addEventListener('click', async () => {
     table.deselectRow();
     table.addRow({
         enabled: true,
@@ -52,7 +53,7 @@ addbtn.addEventListener('click', async (evt) => {
     hightlightChange();
 });
 
-ablebtn.addEventListener('click', (evt) => {
+ablebtn.addEventListener('click', () => {
     let changed = false;
     table.getSelectedRows().forEach( (row) => {
         const cell = row.getCell('enabled');
@@ -65,7 +66,7 @@ ablebtn.addEventListener('click', (evt) => {
     }
 });
 
-delbtn.addEventListener('click', (evt) =>  {
+delbtn.addEventListener('click', () =>  {
     let changed = false;
     table.getSelectedRows().forEach( (row) =>  {
         row.delete();
@@ -76,11 +77,11 @@ delbtn.addEventListener('click', (evt) =>  {
     }
 });
 
-discbtn.addEventListener('click', (evt)=> {
+discbtn.addEventListener('click', ()=> {
     window.location.reload();
 });
 
-savbtn.addEventListener('click', (evt)=> {
+savbtn.addEventListener('click', ()=> {
     let data = table.getData();
     let i=0;
     for(i=0; i<data.length;i++){
@@ -91,7 +92,7 @@ savbtn.addEventListener('click', (evt)=> {
     unhightlightChange();
 });
 
-expbtn.addEventListener('click', (evt) => {
+expbtn.addEventListener('click', () => {
 
     let selectedRows = table.getSelectedRows();
 
@@ -125,15 +126,15 @@ expbtn.addEventListener('click', (evt) => {
 });
 
 // delegate to real import Button which is a file selector
-impbtnWrp.addEventListener('click', function(evt) {
+impbtnWrp.addEventListener('click', function() {
 	impbtn.click();
 });
 
 // read data from file into current table
-impbtn.addEventListener('input', function (evt) {
+impbtn.addEventListener('input', function () {
 	var file  = this.files[0];
 	var reader = new FileReader();
-	        reader.onload = async function(e) {
+            reader.onload = async function() {
             try {
                 var config = JSON.parse(reader.result);
                 let imported_something = false;
@@ -227,7 +228,7 @@ async function onDOMContentLoaded() {
     });
 
     // todo: determine if the row actually moved
-    table.on("rowMoved", function(row){
+    table.on("rowMoved", function(){
         hightlightChange();
     });
 

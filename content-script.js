@@ -1,3 +1,4 @@
+/* global browser */
 
 let timerID;
 const extId = 'PER';
@@ -67,7 +68,7 @@ async function onChange () {
         try {
             if(!(new RegExp(selector.urlregex)).test(window.location.href)){ return; }
         } catch(e) {
-            log('WARN', 'invalid url regex : ' + selectors.urlregex);
+            log('WARN', 'invalid url regex : ' + selector.urlregex);
             return;
         }
 
