@@ -1,8 +1,6 @@
 {
   "author": "igorlogius",
   "browser_action": {
-    "browser_style": true,
-    "default_title" : "Edit PER rules"
   },
   "background": {
 	"scripts": ["background.js"]
@@ -17,19 +15,17 @@
       ]
     }
   ],
-  "description": "Remove elements persistently",
   "icons": {
     "128": "icon.png"
   },
   "manifest_version": 2,
   "name": "Persistent Element Remover",
   "options_ui": {
-    "browser_style": true,
     "open_in_tab": true,
     "page": "options.html"
   },
   "permissions": [
     "storage"
   ],
-  "version": "1.6.6"
+  "version": "1.7.7"
 }

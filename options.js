@@ -37,7 +37,7 @@ function unhightlightChange(){
 
 tgladv.addEventListener('click', async function () {
     table.toggleColumn('tags');
-    table.toggleColumn('annotation');
+    //table.toggleColumn('annotation');
 });
 
 addbtn.addEventListener('click', async () => {
@@ -204,7 +204,7 @@ async function onDOMContentLoaded() {
                 , visible: false
             },
             {title:"Annotation", field:"annotation", maxWidth: 240, headerFilter:"input", headerFilterPlaceholder:"Text filter", editor:"input", sorter: "string", sorterParams: {locale: true, alignEmptyValues: "top"}
-                , visible: false
+                , visible: true
             },
             {title:"CSS Selector or JS Code (*)", field:"code" ,headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"textarea", editorParams: { verticalNavigation: "editor", } ,formatter: "plaintext" },
             {title:'URL Regular Expression (*)',field:"urlregex",headerFilter:"input", headerFilterPlaceholder:"Text filter",editor:"input"},
