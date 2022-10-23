@@ -1,0 +1,31 @@
+This addon can remove elements (annoyances) which are inserted dynamically after pageload
+
+<b>Q:</b> Why do i need this when i have an Adblocker like uBlock Origin or similar.
+<b>A:</b> To my knowledge, no blocker as of yet has the feature to continuously   monitor for and remove elements
+
+<b> Usage  </b>
+<ol>
+<li> Visit the page you want to create a rule for
+</li>
+<li>write a matching url_regex for the site, for example  <i>^https:\/\/www\.<domain>\.<ext>.*</i> , replace <domain> and <ext> with fitting values.
+   (can be tested via https://regex101.com/ )
+</li>
+<li>Next, open the "Tools" -> "Web Developer Tools" menu (shortcut: CTRL+SHIFT+I)
+</li>
+<li>Use the element picker  (at top left corner of the development
+   tools window)  to inspect the element you want to remove
+</li>
+<li>Find a unique identifiert for the elements.
+   => This can be difficult but in most cases it will just be a "class" name (for example "promotedlink")
+      found inside the html element ("div")
+      More infos about css selectors: https://en.wikipedia.org/wiki/CSS
+</li>
+<li>Add and save the css selector (code)  and the url regex (url_regex) as a rule to via the add-ons preference page.
+</li>
+<li>Open or Reload the page, and the elements should be removed
+</li>
+</ol>
+
+<b>EdgeCase: </b>
+<b>Q: </b> What can i do if there is no unique css identifier for the elements i want removed?
+<b>A: </b> Besides using css selectors, you can also use javascript code to identify the page element. Example: '<i> "return (document.querySelectorAll("div.promotedlink"));"</i>)
