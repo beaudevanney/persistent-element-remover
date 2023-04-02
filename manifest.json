@@ -1,5 +1,5 @@
 {
-  "author": "igorlogius",
+  "author": "BD Co.",
   "browser_action": {
   },
   "background": {
@@ -19,7 +19,7 @@
     "128": "icon.png"
   },
   "manifest_version": 2,
-  "name": "Persistent Element Remover",
+  "name": "BD's Element Remover",
   "options_ui": {
     "open_in_tab": true,
     "page": "options.html"
